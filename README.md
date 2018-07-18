@@ -7,3 +7,4 @@ LeetCode Practice
 004. Median of Two Sorted Arrays
 005. Longest Palindromic Substring
 006. ZigZag Conversion
+007. Reverse Integer
