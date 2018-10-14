@@ -36,3 +36,9 @@ LeetCode Practice
 
 012. Integer to Roman
      整数转罗马数字
+
+013. Roman to Integer
+     罗马数字转整数
+
+014. Longest Common Prefix
+     最长公共前缀
