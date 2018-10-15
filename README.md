@@ -42,3 +42,9 @@ LeetCode Practice
 
 014. Longest Common Prefix
      最长公共前缀
+
+015. 3Sum
+     三数之和
+
+016. 3Sum Closest
+     最接近的三数之和
