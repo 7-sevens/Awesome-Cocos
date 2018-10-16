@@ -48,3 +48,15 @@ LeetCode Practice
 
 016. 3Sum Closest
      最接近的三数之和
+
+017. Letter Combinations of a Phone Number
+     电话号码的字母组合
+
+018. 4Sum
+     四数之和
+
+019. Remove Nth Node From End of List
+     删除链表的倒数第N个节点
+
+020. Valid Parentheses
+     有效的括号
