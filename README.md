@@ -72,3 +72,8 @@ LeetCode Practice
 
 024. Swap Nodes in Pairs
      两两交换链表中的节点
+
+025. Reverse Nodes in k-Group
+     k个一组翻转链表
+
+026. 
