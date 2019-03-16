@@ -1,5 +1,5 @@
 # LeetCode
-LeetCode Practice
+LeetCode Solution
 
 001. Two Sum
      两数之和   
