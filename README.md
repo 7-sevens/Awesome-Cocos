@@ -11,6 +11,9 @@
 ----
 #### 二、Shader
 
+- [Shader实例（1）：水波纹(Water Ripple)](./doc/Part_2/Shader实例（1）：水波纹.md)
+- [Shader实例（2）：镜面光泽(Specular Lighting)](./doc/Part_2/Shader实例（2）：镜面光泽.md)
+
 ----
 #### 三、性能优化
 
