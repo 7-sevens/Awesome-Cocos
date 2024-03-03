@@ -1180,7 +1180,7 @@
     "uiScrollView": {
       "__id__": 19
     },
-    "uiListNode": {
+    "uiListContainer": {
       "__id__": 20
     },
     "listItemPrefab": {
