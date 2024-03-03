@@ -1,4 +1,4 @@
-## CocosCreator-repo
+## Awesome Cocos Creator
 
 关于Cocos Creator相关的技术文档、代码示例
 
@@ -13,6 +13,7 @@
 
 - [Shader实例（1）：水波纹(Water Ripple)](./doc/part_2/Shader实例（1）：水波纹.md)
 - [Shader实例（2）：镜面光泽(Specular Lighting)](./doc/part_2/Shader实例（2）：镜面光泽.md)
+- [Shader实例（3）：圆形头像(Circle Avatar)](./doc/part_2/Shader实例（3）：圆形头像.md)
 
 ----
 #### 三、性能优化
