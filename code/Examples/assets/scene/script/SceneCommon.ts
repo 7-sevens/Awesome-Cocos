@@ -2,7 +2,7 @@
 // @brief: scene common
 //
 
-import { _decorator, CCBoolean, Component, director, EditBox, EventGamepad, Input, input, JsonAsset, Node, ScrollView, Vec3 } from 'cc';
+import { _decorator, CCBoolean, Component, director, EditBox, EventGamepad, Input, input, JsonAsset, Label, Node, ScrollView, Vec3 } from 'cc';
 
 
 declare class AutoTestConfigJson extends JsonAsset {
@@ -52,7 +52,7 @@ export class SceneCommon extends Component {
     }
 
     start() {
-
+        director.addPersistRootNode(this.node);
     }
 
     update(deltaTime: number) {
@@ -75,16 +75,16 @@ export class SceneCommon extends Component {
         const gp = event.gamepad;
         const ls = gp.leftStick.getValue();
 
-        const isLeft = this.isControllerButtonPress(gp.dpad.left.getValue()) || ls.x < -axisPrecision;
-        const isRight = this.isControllerButtonPress(gp.dpad.right.getValue()) || (ls.x > axisPrecision);
-        const isBack = this.isControllerButtonPress(gp.buttonEast.getValue());
-        if (isBack) {
-            this.backToList();
-        } else if (isLeft) {
-            this.preScene();
-        } else if (isRight) {
-            this.nextScene();
-        }
+        // const isLeft = this.isControllerButtonPress(gp.dpad.left.getValue()) || ls.x < -axisPrecision;
+        // const isRight = this.isControllerButtonPress(gp.dpad.right.getValue()) || (ls.x > axisPrecision);
+        // const isBack = this.isControllerButtonPress(gp.buttonEast.getValue());
+        // if (isBack) {
+        //     this.backToList();
+        // } else if (isLeft) {
+        //     this.preScene();
+        // } else if (isRight) {
+        //     this.nextScene();
+        // }
     }
 }
 
