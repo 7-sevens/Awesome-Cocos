@@ -1,9 +1,6 @@
-/******************************************
- * @author kL <klk0@qq.com>
- * @date 2020/12/9
- * @doc 列表组件.
- * @end
- ******************************************/
+//
+// @brief: ui list component
+//
 
 import { Node, Component, Enum, tween, _decorator, EventHandler, Tween, ScrollView, Prefab, Layout, Vec2, Size, NodePool, isValid, instantiate, Vec3, Widget, UITransform, CCFloat, CCBoolean, CCInteger } from 'cc';
 import { DEV } from 'cc/env';
