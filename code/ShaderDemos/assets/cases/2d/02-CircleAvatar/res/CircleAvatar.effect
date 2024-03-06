@@ -19,15 +19,12 @@ CCEffect %{
         cullMode: none
       properties:
         alphaThreshold: { value: 0.5 } 
+
         # 自定义参数
-        ## 画布大小
-        canvasSize: { value: [ 667.0, 375.0 ] }
-        ## 中心点
-        centerPoint: { value: [0.5, 0.5] }
-        ## 波纹半径
-        waveRadius: { value: 0.18 }
-        ## 波纹偏移量
-        waveOffset: { value: 2.0 }
+        whRatio: { value: 1, editor: { tooltip: '宽高比' } }
+        circleBlur: { value: 0.01, editor: { tooltip: '光圈模糊程度' } }
+        circleRadius: { value: 0.5, editor: { tooltip: '光圈半径' } }
+        circleCenter: { value: [0.5, 0.5], editor: { tooltip: '光圈中心' } }
 }%
 
 
@@ -46,10 +43,6 @@ CCProgram sprite-vs %{
   out vec4 v_color;
   out vec2 v_uv0;
 
-  #if USE_TEXTURE
-    in vec2 a_uv0;
-  #endif
-
   vec4 vert () {
     vec4 pos = vec4(a_position, 1);
 
@@ -65,10 +58,6 @@ CCProgram sprite-vs %{
       pos = cc_matViewProj * pos;
     #endif
 
-    #if USE_TEXTURE
-      v_uv0 = a_uv0;
-    #endif
-
     v_color = a_color;
     v_uv0 = a_texCoord;
 
@@ -81,7 +70,6 @@ CCProgram sprite-fs %{
   precision highp float;
   #include <builtin/internal/embedded-alpha>
   #include <builtin/internal/alpha-test>
-  #include <builtin/uniforms/cc-global>
 
 
   in vec4 v_color;
@@ -93,25 +81,26 @@ CCProgram sprite-fs %{
   #endif
 
   uniform ARGS {
-    vec2 canvasSize;
-    vec2 centerPoint;
-    float waveRadius;
-    float waveOffset;
+    float circleRadius;
+    float circleBlur;
+    vec2 circleCenter;
+    float whRatio;
   };
 
   vec4 frag () {
-    vec2 distanceVec = centerPoint - v_uv0;
-    distanceVec = distanceVec * vec2(canvasSize.x / canvasSize.y, 1.0);
-    float distance = sqrt(distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y);
-    // distance小于1，如果希望能有多个波峰波谷，则可以在sin的内部乘以一个比较大的倍数
-    // sin函数的值在-1到1之间，如果希望偏移值很小，则可以在输出的时候缩小一定的倍数
-    float sinFactor = sin(distance * 100.0 + cc_time.x) * 0.05;
-    float discardFactor = clamp(waveRadius - abs(waveOffset - distance), 0.0, 1.0);
+    vec4 o = vec4(1, 1, 1, 1);
+    o *= CCSampleWithAlphaSeparated(cc_spriteTexture, v_uv0);
+    o *= v_color;
 
-    //计算总的uv的偏移值
-    vec2 offset = normalize(distanceVec) * sinFactor * discardFactor;
-    vec2 uv = offset + v_uv0;
+    ALPHA_TEST(o);
 
-    return texture(cc_spriteTexture, uv);
+    float circle = circleRadius * circleRadius;
+    float rx = (v_uv0.x - circleCenter.x) * whRatio;
+    float ry = v_uv0.y - circleCenter.y;
+    float dis = rx * rx + ry * ry;
+
+    o.a = smoothstep(circle, circle - circleBlur, dis) * o.a;
+
+    return o;
   }
 }%
