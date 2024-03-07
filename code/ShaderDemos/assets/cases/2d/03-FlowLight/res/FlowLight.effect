@@ -1,0 +1,170 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: sprite-vs:vert
+      frag: sprite-fs:frag
+      depthStencilState:
+        depthTest: false
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      rasterizerState:
+        cullMode: none
+      properties:
+        alphaThreshold: { value: 0.5 } 
+        
+        # 自定义参数
+        lightColor: { value: [1.0, 1.0, 0.0, 1.0], editor: {type: color, tooltip: '光束颜色'} }
+        lightCenterPoint: { value: [0.2, 0.2], editor: {tooltip: '光束中心点坐标'} }
+        lightAngle: { value: 36.0, editor: {tooltip: '光束倾斜角度'} }
+        lightWidth: { value: 0.2, editor: {tooltip: '光束宽度'} }
+        enableGradient: { value: 1.0, editor: {tooltip: '是否启动光束渐变。0-不启动，非0-启用'} }
+        cropAlpha: { value: 1.0, editor: {tooltip: '是否裁剪透明区域上的光。0-不启用，非0-启动'} }
+        enableFog: { value: 0.0, editor: {tooltip: '是否启用迷雾效果。0-不启用，非0-启用'} }
+}%
+
+
+CCProgram sprite-vs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #if USE_LOCAL
+    #include <builtin/uniforms/cc-local>
+  #endif
+
+
+  in vec3 a_position;
+  in vec2 a_texCoord;
+  in vec4 a_color;
+
+  out vec4 color;
+  out vec2 uv0;
+
+  vec4 vert () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if USE_PIXEL_ALIGNMENT
+      pos = cc_matView * pos;
+      pos.xyz = floor(pos.xyz);
+      pos = cc_matProj * pos;
+    #else
+      pos = cc_matViewProj * pos;
+    #endif
+
+    color = a_color;
+    uv0 = a_texCoord;
+
+    return pos;
+  }
+}%
+
+
+CCProgram sprite-fs %{
+  precision highp float;
+  #include <builtin/internal/embedded-alpha>
+  #include <builtin/internal/alpha-test>
+
+
+  in vec4 color;
+
+  #if USE_TEXTURE
+    in vec2 uv0;
+    #pragma builtin(local)
+    layout(set = 2, binding = 11) uniform sampler2D cc_spriteTexture;
+  #endif
+
+  #if ENABLE_LIGHT
+    uniform Light {
+      vec4 lightColor;          //光束颜色
+      vec2 lightCenterPoint;    //光束中心点坐标
+      float lightAngle;         //光束倾斜角度
+      float lightWidth;         //光束宽度
+      float enableGradient;     //启动光束渐变(ps:编辑器不支持bool类型，故此处用float类型)
+      float cropAlpha;          //裁剪掉透明区域上的光(ps:编辑器不支持bool类型，故此处用float类型)
+      float enableFog;          //是否启用迷雾效果(ps:编辑器不支持bool类型，故此处用float类型)
+    };
+
+    // 添加光束颜色
+    vec4 addLightColor(vec4 textureColor, vec4 lightColor, vec2 lightCenterPoint, float lightAngle, float lightWidth) {
+      //边界值处理，没有宽度则返回原始颜色
+      if (lightWidth <= 0.0) {
+        return textureColor;
+      }
+
+      //计算当前uv到光束的距离
+      float dis = 0.0;
+      float angleInRadians = radians(lightAngle);
+      //角度0与非0不同处理
+      if (mod(lightAngle, 180.0) != 0.0) {
+        //计算光束中心线下方与x轴交点的x坐标
+        //(1.0 - lightCenterPoint.y)是将转化为OpenGl坐标系，下文的(1.0 - y)类似
+        float lightOffsetX = lightCenterPoint.x - ((1.0 - lightCenterPoint.y) / tan(angleInRadians));
+
+        //以当前点画一条平行于x轴的线，假设此线和光束中心线相交的点为D点
+        //那么D.y = uv0.y, D.x = lightOffsetX + D.y / tan(angle);
+        float dx = lightOffsetX + (1.0 - uv0.y) / tan(angleInRadians);
+
+        //D到当前uv0的就离就是dis = |uv0.x - D.x|
+        float offsetDis = abs(uv0.x - dx);
+
+        //当前点到光束中心线的垂直距离如下：
+        dis = sin(angleInRadians) * offsetDis;
+      } else {
+        dis = abs(uv0.y - lightCenterPoint.y)
+      }
+
+      float a = 1.0;
+      //裁剪掉透明区域上的点光
+      if (bool(cropAlpha)) {
+        a *= step(0.01, textureColor.a);
+      }
+
+      //裁剪掉光束范围外的uv(迷雾效果)
+      if (!bool(enableFog)) {
+        a *= step(dis, lightWidth * 0.5);
+      }
+
+      //加入从中心往外渐变的效果
+      if (bool(enableGradient)) {
+        a *= 1.0 - dis / (lightWidth * 0.5);
+      }
+
+      //计算出扩散范围内，不同uv对应的实际扩散颜色值
+      vec4 finalLightColor = lightColor * a;
+
+      //混合颜色：再原始图像颜色上叠加扩散颜色
+      //return textureColor * textureColor.a + finalLightColor;
+
+      #if ENABLE_ORIGINCOLOR
+        finalLightColor = textureColor + textureColor * a;
+      #else 
+        finalLightColor = textureColor + finalLightColor;
+        finalLightColor.a = textureColor.a;
+      #endif
+
+      return finalLightColor;
+    }
+  #endif
+
+  vec4 frag () {
+    vec4 o = vec4(1, 1, 1, 1);
+    
+    #if USE_TEXTURE
+      o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);
+    #endif
+
+    o *= color;
+    ALPHA_TEST(o);
+
+    #if ENABLE_LIGHT
+      o = addLightColor(o, lightColor, lightCenterPoint, lightAngle, lightWidth);
+    #endif
+
+    return o;
+  }
+}%

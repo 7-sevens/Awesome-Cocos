@@ -1,0 +1,134 @@
+{
+  "ver": "1.0.26",
+  "importer": "image",
+  "imported": true,
+  "uuid": "bbe4a432-cac5-47eb-8f14-0154801c5de1",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "bbe4a432-cac5-47eb-8f14-0154801c5de1@6c48a",
+      "displayName": "piggy_bank",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "clamp-to-edge",
+        "wrapModeT": "clamp-to-edge",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "bbe4a432-cac5-47eb-8f14-0154801c5de1",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "bbe4a432-cac5-47eb-8f14-0154801c5de1@f9941",
+      "displayName": "piggy_bank",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 1,
+        "offsetY": -1,
+        "trimX": 2,
+        "trimY": 3,
+        "width": 504,
+        "height": 507,
+        "rawWidth": 506,
+        "rawHeight": 511,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [
+            -252,
+            -253.5,
+            0,
+            252,
+            -253.5,
+            0,
+            -252,
+            253.5,
+            0,
+            252,
+            253.5,
+            0
+          ],
+          "indexes": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "uv": [
+            2,
+            508,
+            506,
+            508,
+            2,
+            1,
+            506,
+            1
+          ],
+          "nuv": [
+            0.003952569169960474,
+            0.0019569471624266144,
+            1,
+            0.0019569471624266144,
+            0.003952569169960474,
+            0.9941291585127201,
+            1,
+            0.9941291585127201
+          ],
+          "minPos": [
+            -252,
+            -253.5,
+            0
+          ],
+          "maxPos": [
+            252,
+            253.5,
+            0
+          ]
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "bbe4a432-cac5-47eb-8f14-0154801c5de1@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "hasAlpha": true,
+    "type": "sprite-frame",
+    "fixAlphaTransparencyArtifacts": false,
+    "redirect": "bbe4a432-cac5-47eb-8f14-0154801c5de1@f9941"
+  }
+}
